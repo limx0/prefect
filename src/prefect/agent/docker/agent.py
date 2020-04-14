@@ -2,6 +2,7 @@ import re
 import multiprocessing
 import ntpath
 import posixpath
+import sys
 from sys import platform
 from typing import TYPE_CHECKING, Dict, Iterable, List, Tuple, Optional
 
@@ -9,6 +10,7 @@ from prefect import config, context
 from prefect.agent import Agent
 from prefect.environments.storage import Docker
 from prefect.serialization.storage import StorageSchema
+from prefect.utilities.docker_util import get_docker_ip
 from prefect.utilities.graphql import GraphQLResult
 
 if TYPE_CHECKING:
@@ -332,17 +334,26 @@ class DockerAgent(Agent):
         # Create a container
         self.logger.debug("Creating Docker container {}".format(storage.name))
 
+        host_config = {}
         container_mount_paths = self.container_mount_paths
-        if not container_mount_paths:
-            host_config = None
-        else:
-            host_config = self.docker_client.create_host_config(binds=self.host_spec)
+        if container_mount_paths:
+            host_config.update(binds=self.host_spec)
+
+        if sys.platform.startswith("linux"):
+            docker_internal_ip = get_docker_ip()
+            host_config.update(extra_hosts={"host.docker.internal": docker_internal_ip})
 
         networking_config = None
         if self.network:
-            networking_config = self.docker_client.create_networking_config({
-                self.network: self.docker_client.create_endpoint_config()
-            })
+            networking_config = self.docker_client.create_networking_config(
+                {self.network: self.docker_client.create_endpoint_config()}
+            )
+
+        host_config = (
+            self.docker_client.create_host_config(**host_config)
+            if host_config
+            else None
+        )
 
         container = self.docker_client.create_container(
             storage.name,
@@ -358,7 +369,9 @@ class DockerAgent(Agent):
             "Starting Docker container with ID {}".format(container.get("Id"))
         )
         if self.network:
-            self.logger.debug('Adding container to docker network: {}'.format(self.network))
+            self.logger.debug(
+                "Adding container to docker network: {}".format(self.network)
+            )
 
         self.docker_client.start(container=container.get("Id"))
 
