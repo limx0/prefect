@@ -89,6 +89,11 @@ class DockerAgent(Agent):
             self.container_mount_paths,
             self.host_spec,
         ) = self._parse_volume_spec(volumes or [])
+        self.logger.debug(
+            "Volumes {} | {} | {}".format(
+                self.named_volumes, self.container_mount_paths, self.host_spec
+            )
+        )
 
         # Add containers to a docker network
         self.network = network
