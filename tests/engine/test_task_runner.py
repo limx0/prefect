@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from time import sleep, time
 from unittest.mock import MagicMock
 
+from typing import Dict
+
 import prefect
 from prefect.client import Secret
 from prefect.core.edge import Edge
@@ -1451,7 +1453,7 @@ class TestTargetExistsStep:
 
     def test_check_target_exists(self, tmp_dir):
         result = LocalResult(dir=tmp_dir, location="test-file")
-        result.write(1)
+        result.write(1, inputs={})
 
         my_task = Task(target="test-file", result=result)
 
@@ -1459,14 +1461,14 @@ class TestTargetExistsStep:
             state=Running(result=result), inputs={}
         )
 
-        assert result.exists("test-file")
+        assert result.exists("test-file", inputs={})
         assert new_state.is_cached()
         assert new_state._result.location == "test-file"
         assert new_state.message == "Result found at task target test-file"
 
     def test_check_target_exists_multiple_checks(self, tmp_dir):
         result = LocalResult(dir=tmp_dir, location="test-file")
-        result.write(1)
+        result.write(1, inputs={})
 
         my_task = Task(target="test-file", result=result)
 
@@ -1474,13 +1476,13 @@ class TestTargetExistsStep:
             state=Running(result=result), inputs={}
         )
 
-        assert result.exists("test-file")
+        assert result.exists("test-file", inputs={})
         assert new_state.is_cached()
         assert new_state._result.location == "test-file"
 
         new_state_2 = TaskRunner(task=my_task).check_target(state=new_state, inputs={})
 
-        assert result.exists("test-file")
+        assert result.exists("test-file", inputs={})
         assert new_state_2.is_cached()
         assert new_state_2._result.location == "test-file"
 
@@ -2046,11 +2048,11 @@ class TestLooping:
         class Handler(ResultHandler):
             data = []
 
-            def write(self, obj):
+            def write(self, obj, inputs: Dict):
                 self.data.append(obj)
                 return self.data.index(obj)
 
-            def read(self, idx):
+            def read(self, idx, inputs: Dict):
                 return self.data[idx]
 
         handler = Handler()

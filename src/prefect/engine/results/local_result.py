@@ -1,6 +1,6 @@
 import os
 from slugify import slugify
-from typing import Any
+from typing import Any, Dict
 
 import cloudpickle
 import pendulum
@@ -55,7 +55,7 @@ class LocalResult(Result):
         location = os.path.join(self.dir, fname)
         return location
 
-    def read(self, location: str) -> Result:
+    def read(self, location: str, inputs: Dict) -> Result:
         """
         Reads a result from the local file system and returns the corresponding `Result` instance.
 
@@ -77,7 +77,7 @@ class LocalResult(Result):
 
         return new
 
-    def write(self, value: Any, **kwargs: Any) -> Result:
+    def write(self, value: Any, inputs: Dict, **kwargs: Any) -> Result:
         """
         Writes the result to a location in the local file system and returns a new `Result`
         object with the result's location.
@@ -106,7 +106,7 @@ class LocalResult(Result):
 
         return new
 
-    def exists(self, location: str, **kwargs: Any) -> bool:
+    def exists(self, location: str, inputs: Dict, **kwargs: Any) -> bool:
         """
         Checks whether the target result exists in the file system.
 

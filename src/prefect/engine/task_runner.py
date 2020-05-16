@@ -160,7 +160,9 @@ class TaskRunner(Runner):
         if "_loop_count" in state.cached_inputs:  # type: ignore
             loop_result = state.cached_inputs.pop("_loop_result")
             if loop_result.value is None and loop_result.location is not None:
-                loop_result_value = self.result.read(loop_result.location).value
+                loop_result_value = self.result.read(
+                    loop_result.location, inputs=state.cached_inputs
+                ).value
             else:
                 loop_result_value = loop_result.value
             loop_context = {
@@ -648,8 +650,8 @@ class TaskRunner(Runner):
         target = self.task.target
 
         if result and target:
-            if result.exists(target, **prefect.context):
-                new_res = result.read(target.format(**prefect.context))
+            if result.exists(target, inputs=inputs, **prefect.context):
+                new_res = result.read(target.format(**prefect.context), inputs=inputs)
                 cached_state = Cached(
                     result=new_res,
                     cached_inputs=inputs,
