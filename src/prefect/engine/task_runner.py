@@ -651,7 +651,9 @@ class TaskRunner(Runner):
 
         if result and target:
             if result.exists(target, inputs=inputs, **prefect.context):
-                new_res = result.read(target.format(**prefect.context), inputs=inputs)
+                new_res = result.read(
+                    target.format(**prefect.context), inputs=inputs, **prefect.context
+                )
                 cached_state = Cached(
                     result=new_res,
                     cached_inputs=inputs,

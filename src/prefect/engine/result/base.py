@@ -233,7 +233,7 @@ class Result(ResultInterface):
             "Not implemented on the base Result class - if you are seeing this error you might be trying to use features that require choosing a Result subclass; see https://docs.prefect.io/core/concepts/results.html"
         )
 
-    def read(self, location: str, inputs: Dict,) -> "Result":
+    def read(self, location: str, inputs: Dict, **kwargs) -> "Result":
         """
         Reads from the target result and returns a corresponding `Result` instance.
 
