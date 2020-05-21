@@ -17,7 +17,7 @@ class PrefectResult(Result):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
 
-    def read(self, location: str, inputs: Dict) -> Result:
+    def read(self, location: str, inputs: Dict, **kwargs) -> Result:
         """
         Returns the underlying value regardless of the argument passed.
 
