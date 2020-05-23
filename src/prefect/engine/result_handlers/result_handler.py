@@ -5,7 +5,7 @@ Result Handlers provide the hooks that Prefect uses to store task results in pro
 
 Anytime a task needs its output or inputs stored, a result handler is used to determine where this data should be stored (and how it can be retrieved).
 """
-from typing import Any
+from typing import Any, Dict
 
 from prefect.utilities import logging
 
@@ -17,10 +17,10 @@ class ResultHandler:
     def __repr__(self) -> str:
         return "<ResultHandler: {}>".format(type(self).__name__)
 
-    def write(self, result: Any) -> Any:
+    def write(self, result: Any, inputs: Dict) -> Any:
         return None
 
-    def read(self, loc: str) -> Any:
+    def read(self, loc: str, inputs: Dict) -> Any:
         return None
 
     def __eq__(self, other: object) -> bool:

@@ -20,7 +20,7 @@ import base64
 import copy
 import pendulum
 import uuid
-from typing import Any, Callable, Iterable, Union
+from typing import Any, Callable, Iterable, Union, Dict
 
 import cloudpickle
 
@@ -214,7 +214,7 @@ class Result(ResultInterface):
             new.location = new.default_location
         return new
 
-    def exists(self, location: str, **kwargs: Any) -> bool:
+    def exists(self, location: str, inputs: Dict, **kwargs: Any) -> bool:
         """
         Checks whether the target result exists.
 
@@ -233,7 +233,7 @@ class Result(ResultInterface):
             "Not implemented on the base Result class - if you are seeing this error you might be trying to use features that require choosing a Result subclass; see https://docs.prefect.io/core/concepts/results.html"
         )
 
-    def read(self, location: str) -> "Result":
+    def read(self, location: str, inputs: Dict) -> "Result":
         """
         Reads from the target result and returns a corresponding `Result` instance.
 
@@ -247,7 +247,7 @@ class Result(ResultInterface):
             "Not implemented on the base Result class - if you are seeing this error you might be trying to use features that require choosing a Result subclass; see https://docs.prefect.io/core/concepts/results.html"
         )
 
-    def write(self, value: Any, **kwargs: Any) -> "Result":
+    def write(self, value: Any, inputs: Dict, **kwargs: Any) -> "Result":
         """
         Serialize and write the result to the target location.
 
