@@ -1,5 +1,5 @@
 import json
-from typing import Any
+from typing import Any, Dict
 
 from prefect.engine.result_handlers import ResultHandler
 
@@ -10,7 +10,7 @@ class JSONResultHandler(ResultHandler):
     for small data loads.
     """
 
-    def read(self, jblob: str) -> Any:
+    def read(self, jblob: str, inputs: Dict) -> Any:
         """
         Read a result from a string JSON blob.
 
@@ -22,7 +22,7 @@ class JSONResultHandler(ResultHandler):
         """
         return json.loads(jblob)
 
-    def write(self, result: Any) -> str:
+    def write(self, result: Any, inputs: Dict) -> str:
         """
         Serialize the provided result to JSON.
 

@@ -1,6 +1,6 @@
 import base64
 import uuid
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Dict
 
 import cloudpickle
 import pendulum
@@ -66,7 +66,7 @@ class GCSResultHandler(ResultHandler):
     def __setstate__(self, state: dict) -> None:
         self.__dict__.update(state)
 
-    def write(self, result: Any) -> str:
+    def write(self, result: Any, inputs: Dict) -> str:
         """
         Given a result, writes the result to a location in GCS
         and returns the resulting URI.
@@ -85,7 +85,7 @@ class GCSResultHandler(ResultHandler):
         self.logger.debug("Finished uploading result to {}.".format(uri))
         return uri
 
-    def read(self, uri: str) -> Any:
+    def read(self, uri: str, inputs: Dict) -> Any:
         """
         Given a uri, reads a result from GCS, reads it and returns it
 

@@ -4,7 +4,7 @@ Result Handlers provide the hooks that Prefect uses to store task results in pro
 Anytime a task needs its output or inputs stored, a result handler is used to determine where this data should be stored (and how it can be retrieved).
 """
 import os
-from typing import Any
+from typing import Any, Dict
 
 import cloudpickle
 import pendulum
@@ -48,7 +48,7 @@ class LocalResultHandler(ResultHandler):
         self.dir = abs_directory
         super().__init__()
 
-    def read(self, fpath: str) -> Any:
+    def read(self, fpath: str, inputs: Dict) -> Any:
         """
         Read a result from the given file location.
 
@@ -64,7 +64,7 @@ class LocalResultHandler(ResultHandler):
         self.logger.debug("Finished reading result from {}...".format(fpath))
         return val
 
-    def write(self, result: Any) -> str:
+    def write(self, result: Any, inputs: Dict) -> str:
         """
         Serialize the provided result to local disk.
 

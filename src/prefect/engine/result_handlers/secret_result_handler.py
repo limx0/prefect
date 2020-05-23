@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 
 import prefect
 from prefect.engine.result_handlers import ResultHandler
@@ -17,7 +17,7 @@ class SecretResultHandler(ResultHandler):
         self.secret_task = secret_task
         super().__init__()
 
-    def read(self, name: str) -> Any:
+    def read(self, name: str, inputs: Dict) -> Any:
         """
         Read a secret from a provided name with the provided Secret class;
         this method actually retrieves the secret from the Secret store.
@@ -30,7 +30,7 @@ class SecretResultHandler(ResultHandler):
         """
         return self.secret_task.run()  # type: ignore
 
-    def write(self, result: Any) -> str:
+    def write(self, result: Any, inputs: Dict) -> str:
         """
         Returns the name of the secret.
 
