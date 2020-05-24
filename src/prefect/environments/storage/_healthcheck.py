@@ -54,9 +54,11 @@ def _check_mapped_result_templates(flow: "prefect.Flow"):
             if location is None:
                 continue
             if "{filename}" not in location:
-                raise ValueError(
-                    "Mapped tasks with custom result locations must include {filename} as a template in their location - see https://docs.prefect.io/core/advanced_tutorials/using-results.html#specifying-a-location-for-mapped-or-looped-tasks"
-                )
+                # TODO Ignore this, is currently busted
+                pass
+                # raise ValueError(
+                #     "Mapped tasks with custom result locations must include {filename} as a template in their location - see https://docs.prefect.io/core/advanced_tutorials/using-results.html#specifying-a-location-for-mapped-or-looped-tasks"
+                # )
 
 
 def result_check(flows: list):
