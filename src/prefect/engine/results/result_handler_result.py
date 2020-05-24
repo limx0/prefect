@@ -1,4 +1,4 @@
-from typing import Any, List, Tuple, Type, Dict
+from typing import Any, List, Tuple, Type, Dict, Optional
 
 from prefect.engine.result import Result
 from prefect.engine.results import (
@@ -50,7 +50,7 @@ class ResultHandlerResult(Result):
                 return result_type(**kwargs)
         return cls(result_handler)
 
-    def read(self, location: str, inputs: Dict, **kwargs) -> Result:
+    def read(self, location: str, inputs: Optional[Dict] = None, **kwargs) -> Result:
         """
         Exposes the read method of the underlying custom result handler fitting the Result interface.
         Returns a new Result with the value read from the custom result handler.
@@ -62,10 +62,10 @@ class ResultHandlerResult(Result):
             - Result: returns a copy of this Result with the value set
         """
         new = self.copy()
-        new.value = self.result_handler.read(location, inputs=inputs)
+        new.value = self.result_handler.read(location)
         return new
 
-    def write(self, value: Any, inputs: Dict, **kwargs: Any) -> Result:
+    def write(self, value: Any, inputs: Optional[Dict] = None, **kwargs: Any) -> Result:
         """
         Exposes the write method of the underlying custom result handler fitting the Result interface.
 
@@ -77,6 +77,6 @@ class ResultHandlerResult(Result):
             - Result: returns a copy of this Result with the location and value set
         """
         new = self.copy()
-        new.location = self.result_handler.write(value, inputs=inputs)
+        new.location = self.result_handler.write(value)
         new.value = value
         return new

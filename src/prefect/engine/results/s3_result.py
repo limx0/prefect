@@ -1,5 +1,5 @@
 import io
-from typing import Any, TYPE_CHECKING, Dict
+from typing import Any, TYPE_CHECKING, Dict, Optional
 
 import prefect
 from prefect.engine.result import Result
@@ -75,7 +75,7 @@ class S3Result(Result):
     def __setstate__(self, state: dict) -> None:
         self.__dict__.update(state)
 
-    def write(self, value: Any, inputs: Dict, **kwargs: Any) -> Result:
+    def write(self, value: Any, inputs: Optional[Dict] = None, **kwargs: Any) -> Result:
         """
         Writes the result to a location in S3 and returns the resulting URI.
 
@@ -108,7 +108,7 @@ class S3Result(Result):
         self.logger.debug("Finished uploading result to {}.".format(new.location))
         return new
 
-    def read(self, location: str, inputs: Dict) -> Result:
+    def read(self, location: str, inputs: Optional[Dict] = None) -> Result:
         """
         Reads a result from S3, reads it and returns a new `Result` object with the corresponding value.
 
@@ -147,7 +147,9 @@ class S3Result(Result):
 
         return new
 
-    def exists(self, location: str, inputs: Dict, **kwargs: Any) -> bool:
+    def exists(
+        self, location: str, inputs: Optional[Dict] = None, **kwargs: Any
+    ) -> bool:
         """
         Checks whether the target result exists in the S3 bucket.
 

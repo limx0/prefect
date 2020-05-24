@@ -1,4 +1,4 @@
-from typing import Any, TYPE_CHECKING, Dict
+from typing import Any, TYPE_CHECKING, Dict, Optional
 
 from prefect.engine.result.base import Result
 
@@ -51,7 +51,7 @@ class GCSResult(Result):
     def __setstate__(self, state: dict) -> None:
         self.__dict__.update(state)
 
-    def write(self, value: Any, inputs: Dict, **kwargs: Any) -> Result:
+    def write(self, value: Any, inputs: Optional[Dict] = None, **kwargs: Any) -> Result:
         """
         Writes the result value to a location in GCS and returns the resulting URI.
 
@@ -75,7 +75,7 @@ class GCSResult(Result):
 
         return new
 
-    def read(self, location: str, inputs: Dict) -> Result:
+    def read(self, location: str, inputs: Optional[Dict] = None) -> Result:
         """
         Reads a result from a GCS bucket and returns a corresponding `Result` instance.
 

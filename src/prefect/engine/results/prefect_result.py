@@ -1,6 +1,6 @@
 import json
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from prefect.engine.result import Result
 
@@ -17,7 +17,7 @@ class PrefectResult(Result):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
 
-    def read(self, location: str, inputs: Dict, **kwargs) -> Result:
+    def read(self, location: str, inputs: Optional[Dict] = None, **kwargs) -> Result:
         """
         Returns the underlying value regardless of the argument passed.
 
@@ -32,7 +32,7 @@ class PrefectResult(Result):
         new.location = location
         return new
 
-    def write(self, value: Any, inputs: Dict, **kwargs: Any) -> Result:
+    def write(self, value: Any, inputs: Optional[Dict] = None, **kwargs: Any) -> Result:
         """
         JSON serializes `self.value` and returns `self`.
 
@@ -49,7 +49,9 @@ class PrefectResult(Result):
         new.location = json.dumps(new.value)
         return new
 
-    def exists(self, location: str, inputs: Dict, **kwargs: Any) -> bool:
+    def exists(
+        self, location: str, inputs: Optional[Dict] = None, **kwargs: Any
+    ) -> bool:
         """
         Confirms that the provided value is JSON deserializable.
 

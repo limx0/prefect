@@ -88,7 +88,7 @@ class AzureResultHandler(ResultHandler):
     def __setstate__(self, state: dict) -> None:
         self.__dict__.update(state)
 
-    def write(self, result: Any, inputs: Dict) -> str:
+    def write(self, result: Any) -> str:
         """
         Given a result, writes the result to a location in Azure Blob storage
         and returns the resulting URI.
@@ -115,7 +115,7 @@ class AzureResultHandler(ResultHandler):
 
         return uri
 
-    def read(self, uri: str, inputs: Dict) -> Any:
+    def read(self, uri: str) -> Any:
         """
         Given a uri, reads a result from Azure Blob storage, reads it and returns it
 

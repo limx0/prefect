@@ -48,7 +48,7 @@ class LocalResultHandler(ResultHandler):
         self.dir = abs_directory
         super().__init__()
 
-    def read(self, fpath: str, inputs: Dict) -> Any:
+    def read(self, fpath: str) -> Any:
         """
         Read a result from the given file location.
 
@@ -64,7 +64,7 @@ class LocalResultHandler(ResultHandler):
         self.logger.debug("Finished reading result from {}...".format(fpath))
         return val
 
-    def write(self, result: Any, inputs: Dict) -> str:
+    def write(self, result: Any) -> str:
         """
         Serialize the provided result to local disk.
 

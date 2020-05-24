@@ -10,7 +10,7 @@ class JSONResultHandler(ResultHandler):
     for small data loads.
     """
 
-    def read(self, jblob: str, inputs: Dict) -> Any:
+    def read(self, jblob: str) -> Any:
         """
         Read a result from a string JSON blob.
 
@@ -22,7 +22,7 @@ class JSONResultHandler(ResultHandler):
         """
         return json.loads(jblob)
 
-    def write(self, result: Any, inputs: Dict) -> str:
+    def write(self, result: Any) -> str:
         """
         Serialize the provided result to JSON.
 

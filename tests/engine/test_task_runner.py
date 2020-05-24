@@ -2054,11 +2054,11 @@ class TestLooping:
         class Handler(ResultHandler):
             data = []
 
-            def write(self, obj, inputs: Dict):
+            def write(self, obj):
                 self.data.append(obj)
                 return self.data.index(obj)
 
-            def read(self, idx, inputs: Dict):
+            def read(self, idx):
                 return self.data[idx]
 
         handler = Handler()

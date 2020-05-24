@@ -1,5 +1,5 @@
 import os
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from prefect.client import Secret
 from prefect.engine.result import Result
@@ -75,7 +75,7 @@ class AzureResult(Result):
     def __setstate__(self, state: dict) -> None:
         self.__dict__.update(state)
 
-    def write(self, value: Any, inputs: Dict, **kwargs: Any) -> Result:
+    def write(self, value: Any, inputs: Optional[Dict] = None, **kwargs: Any) -> Result:
         """
         Writes the result value to a blob storage in Azure.
 
@@ -106,7 +106,7 @@ class AzureResult(Result):
 
         return new
 
-    def read(self, location: str, inputs: Dict) -> Result:
+    def read(self, location: str, inputs: Optional[Dict] = None) -> Result:
         """
         Reads a result from an Azure Blob container and returns a corresponding `Result` instance.
 
@@ -142,7 +142,9 @@ class AzureResult(Result):
             raise exc
         return new
 
-    def exists(self, location: str, inputs: Dict, **kwargs: Any) -> bool:
+    def exists(
+        self, location: str, inputs: Optional[Dict] = None, **kwargs: Any
+    ) -> bool:
         """
         Checks whether the target result exists.
 
