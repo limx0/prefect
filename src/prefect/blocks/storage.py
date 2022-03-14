@@ -1,3 +1,4 @@
+import hashlib
 import io
 import os
 import warnings
@@ -169,7 +170,8 @@ class S3StorageBlock(StorageBlock):
         )
 
     async def write(self, data: bytes) -> str:
-        key = str(uuid4())
+        folder, path = content_hash(data)
+        key = f"{folder}/{path}"
         await run_sync_in_worker_thread(self._write_sync, key, data)
         return key
 
@@ -202,11 +204,12 @@ class TempStorageBlock(StorageBlock):
 
     async def write(self, data):
         # Ensure the basepath exists
-        storage_dir = self.basepath() / "prefect"
+        folder, path = content_hash(data)
+        storage_dir = self.basepath() / "prefect" / folder
         storage_dir.mkdir(parents=True, exist_ok=True)
 
         # Write data
-        storage_path = str(storage_dir / str(uuid4()))
+        storage_path = str(storage_dir / path )
         async with await anyio.open_file(storage_path, mode="wb") as fp:
             await fp.write(data)
 
@@ -235,11 +238,12 @@ class LocalStorageBlock(StorageBlock):
 
     async def write(self, data: bytes) -> str:
         # Ensure the basepath exists
-        storage_dir = self.basepath()
+        folder, path = content_hash(data)
+        storage_dir = self.basepath() / folder
         storage_dir.mkdir(parents=True, exist_ok=True)
 
         # Write data
-        storage_path = str(storage_dir / str(uuid4()))
+        storage_path = str(storage_dir / path)
         async with await anyio.open_file(storage_path, mode="wb") as fp:
             await fp.write(data)
 
@@ -276,7 +280,7 @@ class GoogleCloudStorageBlock(StorageBlock):
 
     async def write(self, data: bytes) -> str:
         bucket = self.storage_client.bucket(self.bucket)
-        key = str(uuid4())
+        key = content_hash(data)
         blob = bucket.blob(key)
         upload = partial(blob.upload_from_string, data)
         await run_sync_in_worker_thread(upload)
@@ -304,7 +308,7 @@ class AzureBlobStorageBlock(StorageBlock):
         return await run_sync_in_worker_thread(stream.readall)
 
     async def write(self, data: bytes) -> str:
-        key = str(uuid4())
+        key = content_hash(data)
         blob = self.blob_service_client.get_blob_client(
             container=self.container,
             blob=key,
@@ -328,7 +332,7 @@ class KVServerStorageBlock(StorageBlock):
             )
 
     async def write(self, data: bytes) -> str:
-        key = str(uuid4())
+        key = content_hash(data)
 
         async with httpx.AsyncClient() as client:
             await client.post(
@@ -342,3 +346,8 @@ class KVServerStorageBlock(StorageBlock):
         response.raise_for_status()
         if response.content:
             return str(response.json()).encode()
+
+
+def content_hash(data: bytes) -> Tuple[str, str]:
+    token = hashlib.sha256(data).hexdigest()
+    return token[:2], token[2:]

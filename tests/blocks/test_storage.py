@@ -93,6 +93,7 @@ async def test_azure_blob_storage_block_write_and_read_roundtrips(
     assert await storage_block.read(key) == user_data
 
 
+<<<<<<< HEAD
 @pytest.mark.parametrize("user_data", TEST_DATA)
 async def test_s3_block_write_and_read_roundtrips(user_data):
     with mock_s3():

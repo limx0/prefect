@@ -575,6 +575,41 @@ class TestTaskCaching:
         assert second_state.name == "Completed"
         assert second_state.result() != first_state.result()
 
+    def test_cache_lazy_load(self):
+        def stringed_inputs(context, args):
+            return str(args)
+
+        @task(cache_key_fn=stringed_inputs)
+        def get():
+            return 1
+
+        @task(cache_key_fn=stringed_inputs)
+        def inc(x):
+            return x + 1
+
+        @task(cache_key_fn=stringed_inputs)
+        def multiply(x):
+            return x * 2
+
+        @flow
+        def bar():
+            g = get()
+            f = inc(g)
+            m = multiply(f)
+            return m
+
+        _ = bar()
+        flow_state = bar()
+        first_state, second_state, third_state = flow_state.result()
+        assert first_state.name == "Completed"
+        assert second_state.name == "Cached"
+        assert third_state.name == "Cached"
+
+        # same output
+        assert first_state.result() == 6
+        assert second_state.result() == 6
+        assert third_state.result() == 6
+
 
 class TestCacheFunctionBuiltins:
     def test_task_input_hash_within_flows(self):
