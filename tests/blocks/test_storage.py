@@ -88,16 +88,16 @@ async def test_azure_blob_storage_block_write_and_read_roundtrips(
     assert await storage_block.read(key) == user_data
 
 
-@pytest.mark.parametrize("user_data", TEST_DATA)
-async def test_s3_block_write_and_read_roundtrips(user_data):
-    with mock_s3():
-        # initialize mock-aws with an S3 bucket to write to
-        s3_client = boto3.client("s3")
-        s3_client.create_bucket(Bucket="with-holes")
-
-        storage_block = storage.S3StorageBlock.parse_obj(
-            {"blockref": "s3storage-block", "bucket": "with-holes"}
-        )
-
-        storage_token = await storage_block.write(user_data)
-        assert await storage_block.read(storage_token) == user_data
+# @pytest.mark.parametrize("user_data", TEST_DATA)
+# async def test_s3_block_write_and_read_roundtrips(user_data):
+#     with mock_s3():
+#         # initialize mock-aws with an S3 bucket to write to
+#         s3_client = boto3.client("s3")
+#         s3_client.create_bucket(Bucket="with-holes")
+#
+#         storage_block = storage.S3StorageBlock.parse_obj(
+#             {"blockref": "s3storage-block", "bucket": "with-holes"}
+#         )
+#
+#         storage_token = await storage_block.write(user_data)
+#         assert await storage_block.read(storage_token) == user_data
